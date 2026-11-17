@@ -1,0 +1,1 @@
+{% load ui %}{% if u.profile.avatar %}<img src="{{ u.profile.avatar.url }}" alt="{{ u.username }}" class="{{ size }} shrink-0 rounded-full object-cover">{% else %}<span class="{{ size }} {{ u.username|avatar_color }} inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white" aria-hidden="true">{{ u.username|slice:":2"|upper }}</span>{% endif %}

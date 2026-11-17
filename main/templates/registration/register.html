@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Create account · Circle{% endblock %}
+
+{% block body %}
+<main class="flex min-h-screen items-center justify-center px-4 py-10">
+  <div class="w-full max-w-sm space-y-6">
+    <a href="{% url 'home' %}" class="flex items-center justify-center gap-2.5">
+      <span class="h-8 w-8 rounded-full bg-indigo-600" aria-hidden="true"></span>
+      <span class="text-xl font-semibold tracking-tight">Circle</span>
+    </a>
+
+    <form method="post" class="card space-y-5 p-6" novalidate>
+      {% csrf_token %}
+      <div>
+        <h1 class="text-xl font-semibold tracking-tight">Create your account</h1>
+        <p class="mt-1 text-sm muted">Pick a username and a password.</p>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-800 dark:bg-red-950 dark:text-red-300" role="alert">
+          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+      {% endif %}
+
+      {% include 'main/_field.html' with field=form.username %}
+      {% include 'main/_field.html' with field=form.password1 %}
+      {% include 'main/_field.html' with field=form.password2 %}
+      <button type="submit" class="btn btn-primary w-full">Create account</button>
+    </form>
+
+    <p class="text-center text-sm muted">Already have an account? <a href="{% url 'login' %}" class="font-medium text-indigo-700 hover:underline dark:text-indigo-300">Sign in</a></p>
+  </div>
+</main>
+{% endblock %}

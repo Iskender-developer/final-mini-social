@@ -1,0 +1,49 @@
+{% extends 'app_base.html' %}
+{% block title %}@{{ profile_user.user.username }} · Circle{% endblock %}
+
+{% block content %}
+<section class="card space-y-4 p-6">
+  <div class="flex items-center gap-5">
+    {% include 'main/_avatar.html' with u=profile_user.user size='h-20 w-20 text-2xl sm:h-24 sm:w-24 sm:text-3xl' %}
+    <div class="min-w-0 flex-1">
+      <h1 class="truncate text-[22px] font-semibold tracking-tight">{{ profile_user.user.get_full_name|default:profile_user.user.username }}</h1>
+      <p class="truncate text-sm muted">@{{ profile_user.user.username }} · Joined {{ profile_user.user.date_joined|date:"F Y" }}</p>
+    </div>
+    {% if is_me %}
+      <a href="{% url 'edit_profile' %}" class="btn btn-outline hidden sm:inline-flex">Edit profile</a>
+    {% else %}
+      <form method="post" action="{% url 'toggle_follow' profile_user.user.username %}">{% csrf_token %}
+        {% if is_following %}
+          <button class="btn btn-outline group min-w-[7.5rem]">
+            <span class="group-hover:hidden group-focus-visible:hidden">Following</span>
+            <span class="hidden text-red-700 group-hover:inline group-focus-visible:inline dark:text-red-400">Unfollow</span>
+          </button>
+        {% else %}
+          <button class="btn btn-primary min-w-[7.5rem]">Follow</button>
+        {% endif %}
+      </form>
+    {% endif %}
+  </div>
+
+  {% if is_me %}<a href="{% url 'edit_profile' %}" class="btn btn-outline w-full sm:hidden">Edit profile</a>{% endif %}
+
+  {% if profile_user.bio %}<p class="whitespace-pre-line text-[15px] leading-relaxed">{{ profile_user.bio }}</p>{% endif %}
+
+  <dl class="flex gap-6 text-sm muted">
+    <div class="flex gap-1"><dd class="font-semibold text-zinc-900 dark:text-zinc-100">{{ profile_user.following.count }}</dd><dt>Following</dt></div>
+    <div class="flex gap-1"><dd class="font-semibold text-zinc-900 dark:text-zinc-100">{{ profile_user.followers.count }}</dd><dt>Followers</dt></div>
+    <div class="flex gap-1"><dd class="font-semibold text-zinc-900 dark:text-zinc-100">{{ posts|length }}</dd><dt>Posts</dt></div>
+  </dl>
+</section>
+
+<h2 class="mb-3 mt-6 text-base font-semibold">Posts</h2>
+<div class="space-y-4">
+  {% for post in posts %}
+    {% include 'main/_post_card.html' %}
+  {% empty %}
+    <div class="card px-6 py-10 text-center text-sm muted">
+      {% if is_me %}You haven’t posted yet. <a href="{% url 'create_post' %}" class="font-medium text-indigo-700 hover:underline dark:text-indigo-300">Write your first post</a>.{% else %}No posts yet.{% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

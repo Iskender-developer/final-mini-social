@@ -1,0 +1,36 @@
+{% extends 'app_base.html' %}
+{% block title %}Search · Circle{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-[22px] font-semibold tracking-tight">Find people</h1>
+
+<form action="{% url 'search' %}" method="get" role="search" class="mb-5">
+  <label for="q" class="sr-only">Search by username</label>
+  <input id="q" name="q" type="search" value="{{ q }}" placeholder="Search by username" class="input h-11">
+</form>
+
+{% if q %}
+  <div class="card divide-y divide-zinc-200 dark:divide-zinc-800">
+    {% for p in people %}
+      <div class="flex items-center gap-3 p-3">
+        <a href="{% url 'profile' p.user.username %}" class="flex min-w-0 flex-1 items-center gap-3">
+          {% include 'main/_avatar.html' with u=p.user size='h-10 w-10 text-sm' %}
+          <span class="truncate text-[15px] font-semibold hover:underline">@{{ p.user.username }}</span>
+        </a>
+        {% if p.user_id != request.user.id %}
+          <form method="post" action="{% url 'toggle_follow' p.user.username %}">{% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            {% if p.id in following_ids %}
+              <button class="btn btn-outline h-11 px-4">Following</button>
+            {% else %}
+              <button class="btn btn-primary h-11 px-4">Follow</button>
+            {% endif %}
+          </form>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p class="p-6 text-center text-sm muted">No one found for “{{ q }}”.</p>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

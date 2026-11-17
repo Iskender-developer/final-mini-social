@@ -1,0 +1,7 @@
+{% load ui %}
+<div class="space-y-1.5">
+  <label for="{{ field.id_for_label }}" class="text-sm font-medium">{{ field.label }}</label>
+  {{ field|styled }}
+  {% if field.help_text %}<div class="text-[13px] muted [&_ul]:list-disc [&_ul]:pl-4">{{ field.help_text|safe }}</div>{% endif %}
+  {% for error in field.errors %}<p class="text-[13px] font-medium text-red-700 dark:text-red-400" role="alert">{{ error }}</p>{% endfor %}
+</div>
